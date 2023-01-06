@@ -7,10 +7,7 @@ bool check_string(std::string str) {
             ++check;
     }
 
-    if (check == 0 || check > 1)
-        return false;
-
-    return true;
+    return (check == 0 || check > 1) ? false : true;
 }
 
 std::string first_part_string(std::string str) {
