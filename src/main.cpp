@@ -6,7 +6,6 @@ bool check_string(std::string str) {
         if (str[i] == '@')
             ++check;
     }
-
     return (check == 0 || check > 1) ? false : true;
 }
 
@@ -16,7 +15,6 @@ std::string first_part_string(std::string str) {
     for (int i = 0; str[i] != '@'; ++i) {
         first_part_line += str[i];
     }
-
     return first_part_line;
 }
 
@@ -26,68 +24,55 @@ std::string second_part_string(std::string str) {
     for (int i = first_part_string(str).length() + 1; i < str.length(); ++i) {
         second_part_line += str[i];
     }
-
     return second_part_line;
 }
 
-bool check_symbols_first_part(char line) {
-    std::string admitted_symbols =
-        "!#$%&'*+-/=?^_`{|}~-.0123456789abcdefghijklmnopqrstwxyzABCDEFGHIJKLMNOPQRSTWXYZ";
+bool check_symbols(std::string str1, std::string str2) {
+    int current1 = 0;
+    int current2 = 0;
+    std::string admitted_symbols1 =
+        "!#$%&'*+-/=?^_`{|}~-.0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTWXYZ";
+    std::string admitted_symbols2 =
+        "-.0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTWXYZ";
 
-    for (int j = 0; j < admitted_symbols.length(); ++j) {
-        if (line == admitted_symbols[j]) {
-            return true;
+    for (int i = 0; i < str1.length(); ++i) {
+        for (int j = 0; j < admitted_symbols1.length(); ++j) {
+            (str1[i] == admitted_symbols1[j]) ? current1++ : current1;
         }
     }
-    return false;
-}
 
-bool check_symbols_second_part(char line) {
-    std::string admitted_symbols =
-        "-.0123456789abcdefghijklmnopqrstwxyzABCDEFGHIJKLMNOPQRSTWXYZ";
-
-    for (int j = 0; j < admitted_symbols.length(); ++j) {
-        if (line == admitted_symbols[j]) {
-            return true;
+    for (int i = 0; i < str2.length(); ++i) {
+        for (int j = 0; j < admitted_symbols2.length(); ++j) {
+            (str2[i] == admitted_symbols2[j]) ? current2++ : current2;
         }
     }
-    return false;
+    return (current1 < str1.length() || current2 < str2.length()) ? false : true;
 }
 
-bool check_first_part_string(std::string str) {
-    if (str.length() < 1 || str.length() > 64) {
+bool check_parts_string(std::string str1, std::string str2) {
+    if (str1.length() < 1 || str1.length() > 64
+        || str2.length() < 1 || str2.length() > 63) {
         return false;
     }
 
-    for (int i = 0; i < str.length(); ++i) {
-        if (!check_symbols_first_part(char(str[i])) || (str[i] == '.' && str[i + 1] == '.')
-            || str[0] == '.' || str[str.length() - 1] == '.') {
+    for (int i = 0; i < str1.length(); ++i) {
+        if (!check_symbols(str1, str2) || (str1[i] == '.' && str1[i + 1] == '.')
+            || (str2[i] == '.' && str2[i + 1] == '.') || str1[0] == '.'
+            || str2[0] == '.' || str1[str1.length() - 1] == '.'
+            || str2[str2.length() - 1] == '.')
             return false;
-        }
     }
     return true;
 }
 
-bool check_second_part_string(std::string str) {
-    if (str.length() < 1 || str.length() > 63) {
-        return false;
-    }
-
-    for (int i = 0; i < str.length(); ++i) {
-        if (!check_symbols_second_part(char(str[i])) || (str[i] == '.' && str[i + 1] == '.')
-            || str[0] == '.' || str[str.length() - 1] == '.') {
-            return false;
-        }
-    }
-    return true;
+bool check_all_email(std::string email) {
+    return (check_string(email)
+        and check_parts_string(first_part_string(email), second_part_string(email))) ? true : false;
 }
 
 int main() {
     std::string email;
     std::cout << "Input your email ";
     std::cin >> email;
-
-    (check_string(email) && check_first_part_string(first_part_string(email))
-        && check_second_part_string(second_part_string(email))) ?
-        (std::cout << "Yes" << std::endl) : (std::cout << "No" << std::endl);
+    (check_all_email(email)) ? (std::cout << "Yes" << std::endl) : (std::cout << "No" << std::endl);
 }
